@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido Especial</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .gallery {
+            position: relative;
+            text-align: center;
+        }
+
+        .gallery img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .gallery-text {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .gallery-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .gallery-buttons button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .gallery-buttons button:hover {
+            background-color: #45a049;
+        }
+
+        /* Animação dos corações */
+        @keyframes heart-float {
+            0% {
+                transform: scale(0.5) translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.2) translateY(-100vh);
+                opacity: 0;
+            }
+        }
+
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: red;
+            clip-path: polygon(50% 0%, 100% 35%, 80% 100%, 50% 75%, 20% 100%, 0% 35%);
+            animation: heart-float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pedido Especial</h1>
+        <p>Digite a senha para ver a surpresa:</p>
+        <input type="password" id="password" placeholder="Senha">
+        <button onclick="checkPassword()">Entrar</button>
+        <p id="error" class="error"></p>
+    </div>
+
+    <div class="gallery hidden">
+        <img id="gallery-img" src="imagem1.jpg" alt="Imagem Galeria">
+        <p id="gallery-text" class="gallery-text">Strogonoff - Não sou sua comida favorita, mas queria ser a batata-palha do seu strogonoff.</p>
+        <div class="gallery-buttons">
+            <button onclick="previousImage()">Voltar</button>
+            <button onclick="nextImage()">Próxima</button>
+        </div>
+    </div>
+
+    <div class="hearts-container hidden" id="hearts-container"></div>
+
+    <script>
+        function checkPassword() {
+            const password = document.getElementById('password').value;
+            const errorElement = document.getElementById('error');
+            const galleryElement = document.querySelector('.gallery');
+
+            if (password === "0709") {
+                errorElement.textContent = "";
+                document.querySelector('.container').style.display = 'none';
+                galleryElement.classList.remove('hidden');
+            } else {
+                errorElement.textContent = "Senha incorreta! Tente novamente.";
+            }
+        }
+
+        const galleryData = [
+            {
+                img: "imagem1.jpg",
+                text: "Strogonoff - Não sou sua comida favorita, mas queria ser a batata-palha do seu strogonoff."
+            },
+            {
+                img: "imagem2.jpg",
+                text: "Girassóis - Não sou um girassol, mas espero estar sempre na sua direção."
+            },
+            {
+                img: "imagem3.jpg",
+                text: "Roxo - Não sou sua cor preferida, mas quero estar com você para colorir meu dia."
+            },
+            {
+                img: "imagem4.png",
+                text: "Van Gogh - Van Gogh amou o amarelo porque não conheceu o castanho dos seus olhos. Ele ficaria fascinado, assim como eu."
+            },
+            {
+                img: "imagem5.png",
+                text: "Direito - Não sou advogado, mas espero fazer tudo direito sempre que precisar de mim."
+            },
+            {
+                img: "imagem6.png",
+                text: "Partilha de Bens - Não sou partilha de bens, porque meu bem mais precioso é você, e não quero partilhar com ninguém."
+            },
+            {
+                img: "imagem7.jfif",
+                text: "Catavento - Não sou catavento, mas espero que a brisa do vento sempre me leve até você."
+            },
+            {
+                img: "imagem8.jpg",
+                text: "É Assim Que Acaba - Nós dois juntinhos."
+            }
+        ];
+
+        let currentImageIndex = 0;
+
+        function updateGallery() {
+            const imgElement = document.getElementById('gallery-img');
+            const textElement = document.getElementById('gallery-text');
+
+            imgElement.src = galleryData[currentImageIndex].img;
+            textElement.textContent = galleryData[currentImageIndex].text;
+        }
+
+        function nextImage() {
+            if (currentImageIndex < galleryData.length - 1) {
+                currentImageIndex++;
+                updateGallery();
+            } else {
+                window.location.href = 'pedido.html'; // Adiciona esta linha para redirecionar para pedido.html
+            }
+        }
+
+        function previousImage() {
+            if (currentImageIndex > 0) {
+                currentImageIndex--;
+                updateGallery();
+            }
+        }
+
+        function showProposal() {
+            document.querySelector('.gallery').classList.add('hidden');
+            startHeartAnimation();
+        }
+
+        function startHeartAnimation() {
+            const heartsContainer = document.getElementById('hearts-container');
+            heartsContainer.classList.remove('hidden');
+
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.style.left = `${Math.random() * 100}%`;
+                heart.style.animationDelay = `${Math.random() * 2}s`;
+                heart.style.animationDuration = `${2 + Math.random() * 2}s`;
+                heartsContainer.appendChild(heart);
+            }
+
+            setTimeout(() => {
+                const message = document.createElement('h1');
+                message.textContent = "Você quer namorar comigo?";
+                message.style.position = 'absolute';
+                message.style.top = '50%';
+                message.style.left = '50%';
+                message.style.transform = 'translate(-50%, -50%)';
+                message.style.color = '#333';
+                heartsContainer.appendChild(message);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
